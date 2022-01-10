@@ -7,6 +7,8 @@ const morgan = require('morgan');
 const ejsMate = require('ejs-mate');
 const catchAsync = require('./utilities/catchAsync');
 const ExpressError = require('./utilities/ExpressError');
+const joi = require('joi');
+const { campgroundScehma } = require('./schemas');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -28,6 +30,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'))
 app.use(morgan('dev'))
 app.engine('ejs', ejsMate);
+
+const validateCampground = (req, res, next) => {
+    const { error } = campgroundScehma.validate(req.body);
+    if (error) {
+        //the destructured error.details is an array of objects
+        //we need to map over the objects within the array
+        //and turn it into a single string and join it together
+        const message = error.details.map(el => el.message).join(',')
+        throw new ExpressError(400, message)
+    }
+    else {
+        next();
+    }
+}
 
 app.get('/', (req, res) => {
     res.render('home');
@@ -52,20 +68,19 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
     res.render('campgrounds/edit', { campground });
 }))
 
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res, next) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, { ...req.body.campground }, { new: true });
     res.redirect(`/campgrounds/${campground._id}`);
 }))
 
-app.post('/campgrounds', catchAsync(async (req, res) => {
-    if (!req.body.campground)
-        throw new ExpressError(400, "Invalid Campground Data")
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
+
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
 }))
 
-app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     await Campground.findByIdAndDelete(req.params.id);
     res.redirect('/campgrounds');
 }))
@@ -75,8 +90,10 @@ app.all('*', (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500, message = "Something Went Wrong" } = err;
-    res.status(statusCode).send(message);
+    const { statusCode = 500 } = err;
+    if (!err.message)
+        err.message = "Something Went Wrong!"
+    res.status(statusCode).render('error', { err });
 });
 
 app.listen("3000", () => {
