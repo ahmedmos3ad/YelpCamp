@@ -1,16 +1,16 @@
 <% layout('layouts/boilerplate')%>
     <h1 class="text-center">Edit Campground</h1>
     <div class="col-6 offset-3">
-        <form action="/campgrounds/<%=campground._id%>?_method=PUT " method="POST">
+        <form action="/campgrounds/<%=campground._id%>?_method=PUT " method="POST" novalidate class="validate-form">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" id="title" class="form-control" name="campground[title]"
-                    value="<%=campground.title%>">
+                    value="<%=campground.title%>" required>
             </div>
             <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
                 <input type="text" id="location" class="form-control" name="campground[location]"
-                    value="<%=campground.location%>">
+                    value="<%=campground.location%>" required>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
@@ -18,17 +18,17 @@
                     <span class="input-group-text" id="price-label">$</span>
                     <input id="price" type="number" step=".01" class="form-control"
                         aria-label="Amount (to the nearest dollar)" placeholder="0.00" aria-describedby="price-label"
-                        name="campground[price]" value="<%=campground.price%>">
+                        name="campground[price]" value="<%=campground.price%>" required>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea type="text" id="description" class="form-control"
-                        name="campground[description]"><%=campground.description%></textarea>
+                    <textarea type="text" id="description" class="form-control" name="campground[description]"
+                        required><%=campground.description%></textarea>
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Image URL</label>
                     <input type="url" id="image" class="form-control" name="campground[image]"
-                        value="<%=campground.image%>">
+                        value="<%=campground.image%>" required>
                 </div>
                 <button class="btn btn-info mb-3">Update Campground</button>
         </form>
