@@ -17,14 +17,14 @@ const CampgroundSchema = new Schema({
 });
 
 CampgroundSchema.post('findOneAndDelete', async doc => {
-    console.log("Some Camp got deleted")
+    //console.log("Some Camp got deleted")
     if (doc) {
         await Review.deleteMany({
             _id: {
                 $in: doc.reviews
             }
         })
-        console.log("Review Deleted")
+        //console.log("Review Deleted")
     }
 })
 module.exports = mongoose.model('Campground', CampgroundSchema);
