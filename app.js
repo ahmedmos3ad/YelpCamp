@@ -7,6 +7,8 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utilities/ExpressError");
 const campgrounds = require("./routes/campground")
 const reviews = require("./routes/reviews");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
   useNewUrlParser: true,
@@ -30,8 +32,27 @@ app.use(methodOverride("_method"));
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const sessionConfiguration = {
+  secret: 'Thisisnotreallyasecret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expirse: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  }
+}
+
+app.use(session(sessionConfiguration));
+app.use(flash());
+
 app.engine("ejs", ejsMate);
 
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+})
 
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);
