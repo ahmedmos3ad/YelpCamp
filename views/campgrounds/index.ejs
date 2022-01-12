@@ -5,7 +5,8 @@
         <div class="card mb-3">
             <div class="row">
                 <div class="col-md-4">
-                    <img src="<%=campground.images[0].url%>" alt="" class="img-fluid">
+                    <img src="<%= campground.images.length!==0 ? campground.images[0].url: 'https://res.cloudinary.com/dwa8ln1gv/image/upload/v1641945167/YelpCamp/nmizu31ctfjf4vtedyxv.jpg'%>"
+                        alt="" class="img-fluid">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
