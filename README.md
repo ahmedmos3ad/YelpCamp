@@ -14,7 +14,7 @@ Link : https://mos3adcamp.herokuapp.com/
 - All images are uploaded and saved using cloudinary
 - Maps and Locations are displayed using Mapbox
 
-## Used For Implementing
+## Used For Implemention:
 
 Technologies that are used : 
 * NodeJS 
