@@ -59,4 +59,4 @@ Node Modules:
 Feel free to test the functionality of this website by signing up and creating/editing/deleting campgrounds, creating/deleting reviews.
 The app has full RESTful CRUD functionality when it comes to campgrounds, I have validated it server side and client side.
 client side validations were done using bootstrap, server side validations were done using several express middlewares that I wrote.
-
+Feel free to use admin, admin as credentials to test ownership functionality on the website.
