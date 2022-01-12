@@ -1,8 +1,11 @@
-const mongoose = require('mongoose');
-const Review = require('./review');
-const Schema = mongoose.Schema;
+const mongoose=require('mongoose');
+const Review=require('./review');
+const Schema=mongoose.Schema;
 
-const ImageSchema = new Schema(
+//by default moongose doesn't include virtuals when you conver a document to JSON
+const opts={ toJSON: { virtuals: true } };
+
+const ImageSchema=new Schema(
     {
         url: String,
         filename: String
@@ -13,7 +16,7 @@ ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 })
 
-const CampgroundSchema = new Schema({
+const CampgroundSchema=new Schema({
     title: String,
     price: Number,
     description: String,
@@ -41,7 +44,7 @@ const CampgroundSchema = new Schema({
             ref: 'Review'
         }
     ]
-});
+}, opts);
 
 CampgroundSchema.post('findOneAndDelete', async doc => {
     //console.log("Some Camp got deleted")
@@ -54,4 +57,10 @@ CampgroundSchema.post('findOneAndDelete', async doc => {
         //console.log("Review Deleted")
     }
 })
-module.exports = mongoose.model('Campground', CampgroundSchema);
+
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+    return `<strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>
+    <p>${this.location}</p>`
+});
+
+module.exports=mongoose.model('Campground', CampgroundSchema);
