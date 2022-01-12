@@ -19,9 +19,16 @@ const LocalPassport=require("passport-local");
 const User=require("./models/user");
 const mongoSanitize=require('express-mongo-sanitize');
 const helmet=require('helmet');
+const MongoStore=require('connect-mongo')
 
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+
+const dbUrl=process.env.DB_URL
+//const dbUrl="mongodb://localhost:27017/yelp-camp"
+
+
+//"mongodb://localhost:27017/yelp-camp"
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   //useCreateIndex: true,
   useUnifiedTopology: true,
@@ -45,10 +52,15 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(mongoSanitize());
 app.use(helmet({ contentSecurityPolicy: false }));
 
+const secret=process.env.SECRET||"iwishthiswasasecret"
 
 const sessionConfiguration={
+  store: MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24*60*60
+  }),
   name: 'session',
-  secret: 'Thisisnotreallyasecret',
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
