@@ -1,7 +1,8 @@
 <% layout('layouts/boilerplate')%>
     <h1 class="text-center">Edit Campground</h1>
     <div class="col-6 offset-3">
-        <form action="/campgrounds/<%=campground._id%>?_method=PUT " method="POST" novalidate class="validate-form">
+        <form action="/campgrounds/<%=campground._id%>?_method=PUT " method="POST" novalidate class="validate-form"
+            enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" id="title" class="form-control" name="campground[title]"
@@ -26,9 +27,20 @@
                         required><%=campground.description%></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="image" class="form-label">Image URL</label>
-                    <input type="url" id="image" class="form-control" name="campground[image]"
-                        value="<%=campground.image%>" required>
+                    <label for="image" class="form-label">Add more Images</label>
+                    <input type="file" id="image" class="form-control" name="image" multiple>
+                </div>
+
+                <div class="mb-3">
+                    <% campground.images.forEach(function(img, i){ %>
+                        <img src="<%=img.thumbnail%> " alt="" class="img-thumbnail" alt="">
+                        <div class="form-check-inline">
+                            <input type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%=img.filename%>">
+                            <label for="image-<%=i%>">Delete?</label>
+                        </div>
+
+
+                        <% }) %>
                 </div>
                 <button class="btn btn-info mb-3">Update Campground</button>
         </form>

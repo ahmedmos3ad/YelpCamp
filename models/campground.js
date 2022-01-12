@@ -2,11 +2,22 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
 
+const ImageSchema = new Schema(
+    {
+        url: String,
+        filename: String
+    }
+)
+//create a  virtual property from the database to provide a thumbnail of the image from cloudinary
+ImageSchema.virtual('thumbnail').get(function () {
+    return this.url.replace('/upload', '/upload/w_200');
+})
+
 const CampgroundSchema = new Schema({
     title: String,
     price: Number,
     description: String,
-    image: String,
+    images: [ImageSchema],
     location: String,
     author: {
         type: Schema.Types.ObjectId,
